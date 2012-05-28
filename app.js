@@ -50,13 +50,37 @@ var Log = db.model('Log');
 
 //app.get('/', routes.index);
 app.get('/', function(req,res){
-  Log.find().desc('time').find(function(err, logList) {
+  Log.find({},[],{limit:100}).desc('time').find(function(err, logList) {
     res.render('index', {
       locals:{
         logs: logList
       }
     });
   });	
+});
+
+app.get('/search', function(req,res){
+  var element = "";
+  var keyword = "";
+  if ( req.query.element ){
+    element = req.query.element;
+  }
+  if ( req.query.keyword ){
+    keyword = req.query.keyword;
+    element = keyword.slice(keyword.indexOf("[")+1,keyword.indexOf("]"));
+    keyword = keyword.slice(keyword.indexOf("]")+1);
+  }
+  var exp = new RegExp(keyword,"i");
+  var keyobj = new Object();
+  keyobj[element] = exp;
+  Log.find(keyobj,[],{limit:100}).desc('time').find(function(err,logList) {
+    res.render('index', {
+      locals:{
+        logs:logList,
+        keyword:keyword
+      }
+    });
+  });
 });
 
 app.listen(3000, function(){

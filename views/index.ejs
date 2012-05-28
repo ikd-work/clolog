@@ -16,8 +16,14 @@
   </div>
 </div>
 
-<form class="well form-search">
-  <input type="text" class="input-medium search-query">
+<form class="well form-search" action="/search">
+<span class="badge">time</span>
+<span class="badge badge-success">source</span>
+<span class="badge badge-warning">url</span>
+<span class="badge badge-important">code</span>
+<br>
+  <input type="text" class="input-medium search-query" name="keyword" size="30">
+  <input type="hidden" name="element" value="code">
   <button type="submit" class="btn">Search</button>
 </form>
 

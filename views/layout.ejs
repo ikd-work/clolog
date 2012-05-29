@@ -3,6 +3,31 @@
   <head>
     <title>Clolog</title>
     <link rel='stylesheet' href='/stylesheets/bootstrap.css' />
+    <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        $("#time").click(function(){
+          $(".search-query").val("[time]");
+          $(".badge").css('border','none');
+          $(this).css('border', '2px solid #ff0000');
+        });
+        $("#host").click(function(){
+          $(".search-query").val("[host]");
+          $(".badge").css('border','none');
+          $(this).css('border', '2px solid #ff0000');
+        });
+        $("#path").click(function(){
+          $(".search-query").val("[path]");
+          $(".badge").css('border','none');
+          $(this).css('border', '2px solid #ff0000');
+        });
+        $("#code").click(function(){
+          $(".search-query").val("[code]");
+          $(".badge").css('border','none');
+          $(this).css('border', '2px solid #ff0000');
+        });
+       });
+    </script>
   </head>
   <body>
     <%- body %>

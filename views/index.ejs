@@ -17,10 +17,10 @@
 </div>
 
 <form class="well form-search" action="/search">
-<span class="badge">time</span>
-<span class="badge badge-success">source</span>
-<span class="badge badge-warning">url</span>
-<span class="badge badge-important">code</span>
+<span id="time" class="badge"><a href="#">time</a></span>
+<span id="host" class="badge badge-success"><a href="#">host</a></span>
+<span id="path" class="badge badge-warning"><a href="#">path</a></span>
+<span id="code" class="badge badge-important"><a href="#">code</a></span>
 <br>
   <input type="text" class="input-medium search-query" name="keyword" size="30">
   <input type="hidden" name="element" value="code">
@@ -30,9 +30,9 @@
 <table class="table table-striped">
 <tr>
 <th>Time</th>
-<th>Source</th>
-<th>URL</th>
-<th>ResponseCode</th>
+<th>Host</th>
+<th>Path</th>
+<th>Code</th>
 </tr>
 <% for (var i = 0; i < logs.length; i++) { %>
 <tr>

@@ -4,7 +4,10 @@
  */
 
 var express = require('express')
-  , routes = require('./routes');
+  , routes = require('./routes')
+  , passport = require('passport')
+  , FacebookStrategy = require('passport-facebook').Strategy;
+
 
 var app = module.exports = express.createServer();
 
@@ -15,6 +18,10 @@ app.configure(function(){
   app.set('view engine', 'ejs');
   app.use(express.bodyParser());
   app.use(express.methodOverride());
+  app.use(express.cookieParser());
+  app.use(express.session({secret: 'clologsessionsecrte'}));
+  app.use(passport.initialize());
+  app.use(passport.session());
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
 });
@@ -45,11 +52,32 @@ var Log = db.model('Log');
 //  if (err) { console.log(err); }
 //});
 
+// Facebook OAuth
+passport.use(new FacebookStrategy({
+  clientID: "368494553205387",
+  clientSecret: "89e22ea3b8589e7e0087959c369ab963",
+  callbackURL: "http://172.19.65.129:3000/"
+  },
+  function(accessToken, refreshToken, profile, done){
+    passport.session.accessToken = accessToken;
+    process.nextTick(function(){
+    done(null ,profile);
+  });
+}));
+
+passport.serializeUser(function(user, done){
+  done(null, user);
+});
+ 
+passport.deserializeUser(function(obj, done){
+  done(null, obj);
+});
 
 // Routes
 
 //app.get('/', routes.index);
 app.get('/', function(req,res){
+  passport.authenticate('facebook',{faulureRedirect: '/fail'});
   Log.find({},[],{limit:100}).desc('time').find(function(err, logList) {
     res.render('index', {
       locals:{
@@ -57,6 +85,32 @@ app.get('/', function(req,res){
       }
     });
   });	
+});
+
+app.get('/auth', passport.authenticate('facebook'));
+
+app.get('/account', function(req,res){
+  var https = require('https')
+  , session = require('passport').session;
+  api_path = '/me?access_token='+session.accessToken;
+  var data = "";
+  var my_info;
+  var api_req = https.request({host: 'graph.facebook.com',path: api_path, method: 'GET'}, function(api_res){
+    api_res.setEncoding('utf8');
+    api_res.on('data',function(d){
+      data += d;
+    });
+    api_res.on('end',function(){
+      my_info = JSON.parse(data);
+      res.render('account',{locals:{myname: data.name}});
+    });
+  });
+});
+
+app.get('/logout', function(req,res){
+  req.session.destroy();
+  req.logout();
+  res.render('logout');
 });
 
 app.get('/search', function(req,res){
